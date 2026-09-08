@@ -1,38 +1,46 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="source-sha256" content="70376445f87f3a571ae53647ba1e04c9e16cdb8af23783a02865f1958a44fcec"><meta name="build-fingerprint" content="6d936e52e97174ab3cde3d8b7ded31f88bd34f6e5c73de0cfe2b61ad9b9241dd">
-<title>Huawei interview — presentation and Q&amp;A</title><style>:root { color-scheme: light; font-family: Arial, "Segoe UI", sans-serif; font-size: 15px; color: #203449; background: #f4f5f7; }
+<meta name="source-sha256" content="70376445f87f3a571ae53647ba1e04c9e16cdb8af23783a02865f1958a44fcec"><meta name="build-fingerprint" content="05b0fce65575487abb3abf5c1d7feabd3b6619825ce3969f580d4d6dab3a63b7">
+<title>Huawei interview — presentation and Q&amp;A</title>
+<script>try { if (localStorage.getItem('interview-theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch {}</script>
+<style>:root { color-scheme: light; --bg: #f4f5f7; --text: #203449; --panel: #eef1f4; --muted: #43566a; --border: #c5d0dc; --heading: #183b64; --link: #164c85; --hover: #102f50; --code: #edf0f3; font-family: Arial, "Segoe UI", sans-serif; font-size: 15px; color: var(--text); background: var(--bg); }
+:root[data-theme="dark"] { color-scheme: dark; --bg: #151c24; --text: #d7e1eb; --panel: #202a36; --muted: #aebdce; --border: #526478; --heading: #b5d7ff; --link: #91c5ff; --hover: #c8e2ff; --code: #202a36; }
 * { box-sizing: border-box; }
 body { margin: 0; }
-header { padding: 7px 16px; border-bottom: 1px solid #d2d9e0; background: #eef1f4; font-size: 14px; }
-header span { margin-left: 12px; color: #43566a; }
+header { padding: 7px 16px; border-bottom: 1px solid var(--border); background: var(--panel); font-size: 14px; }
+header span { margin-left: 12px; color: var(--muted); }
 main { max-width: 1120px; padding: 10px 18px 28px; margin: 0 auto; line-height: 1.42; overflow-wrap: anywhere; }
 h1 { font-size: 18px; margin: 8px 0; }
 h2, h3, h4 { font-size: 16px; line-height: 1.35; margin: 12px 0 5px; }
-h2 { border-bottom: 1px solid #c5d0dc; padding-bottom: 4px; }
-h4 { color: #183b64; }
+h2 { border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+h4 { color: var(--heading); }
 p { margin: 5px 0; }
 ol, ul { margin: 4px 0 7px; padding-left: 26px; }
 li { margin: 2px 0; padding-left: 1px; }
 li p { margin: 2px 0; }
-a { color: #164c85; text-underline-offset: 2px; }
-a:hover { color: #102f50; }
-button { font: inherit; color: inherit; background: none; border: 1px solid #aebccb; border-radius: 2px; padding: 1px 7px; cursor: pointer; }
-hr { border: 0; border-top: 1px solid #d4dbe3; margin: 11px 0; }
-pre { margin: 6px 0; padding: 8px; border: 1px solid #d4dbe3; background: #edf0f3; overflow-x: auto; }
+a { color: var(--link); text-underline-offset: 2px; }
+a:hover { color: var(--hover); }
+button { font: inherit; color: inherit; background: none; border: 1px solid var(--border); border-radius: 2px; padding: 3px 7px; cursor: pointer; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
+hr { border: 0; border-top: 1px solid var(--border); margin: 11px 0; }
+pre { margin: 6px 0; padding: 8px; border: 1px solid var(--border); background: var(--code); overflow-x: auto; }
 code { font-family: Consolas, monospace; font-size: 0.95em; }
-blockquote { margin: 5px 0; padding-left: 12px; border-left: 2px solid #8d9eb0; }
+blockquote { margin: 5px 0; padding-left: 12px; border-left: 2px solid var(--border); }
 .study-diagram { margin: 7px 0 10px; overflow-x: auto; }
 .study-diagram svg { display: block; width: 100%; min-width: 440px; height: auto; max-height: 550px; }
 .sequence-diagram svg { min-width: 850px; max-height: none; }
-figcaption, summary { font-size: 14px; color: #43566a; margin: 3px 0; }
+/* The embedded SVGs use a fixed light palette. Transform the entire palette,
+   including arrows and labels, without altering the source or adding scripts. */
+:root[data-theme="dark"] .study-diagram svg { filter: invert(1) hue-rotate(180deg); }
+figcaption, summary { font-size: 14px; color: var(--muted); margin: 3px 0; }
 summary { cursor: pointer; }
 table { border-collapse: collapse; width: 100%; }
-th, td { text-align: left; border-bottom: 1px solid #ccd5df; padding: 4px 6px; }
+th, td { text-align: left; border-bottom: 1px solid var(--border); padding: 4px 6px; }
 :target { scroll-margin-top: 12px; }
 @media (max-width: 600px) { main { padding: 8px 10px 20px; } header span { display: block; margin: 5px 0 0; } }
 @media print {
-  :root { background: white; color: #172637; font-size: 10pt; }
+  :root, :root[data-theme="dark"] { color-scheme: light; --bg: white; --text: #172637; --panel: #eef1f4; --muted: #43566a; --border: #c5d0dc; --heading: #183b64; --link: #164c85; --hover: #102f50; --code: #edf0f3; font-size: 10pt; }
+  :root[data-theme="dark"] .study-diagram svg { filter: none; }
   header, .study-diagram details { display: none; }
   main { max-width: none; padding: 0; }
   h1 { font-size: 13pt; } h2, h3, h4 { font-size: 11pt; break-after: avoid; }
@@ -42,6 +50,7 @@ th, td { text-align: left; border-bottom: 1px solid #ccd5df; padding: 4px 6px; }
 }
 </style></head>
 <body><header><a href="#heading-jump-to-a-section">Sections</a> · <a href="huawei_presentation_with_qa.md">Markdown source</a> · <button type="button" id="print">Print</button>
+ · <button type="button" id="theme-toggle" hidden>Switch to dark mode</button>
 <span id="sync-status">Generated from Markdown · 130 questions · offline diagrams</span></header>
 <main><h1 id="heading-huawei-interview-presentation-script-with-interruption-q-a">Huawei interview — presentation script with interruption Q&amp;A</h1>
 <p>Prepared 5 September 2026; logic and source-code review updated 6 September 2026 for the submitted <a href="bui_cong_nguyen.pptx">bui_cong_nguyen.pptx</a>. The PowerPoint is unchanged.</p>
@@ -1691,6 +1700,18 @@ torch.testing.assert_close(ttnn.to_torch(x_back), host, rtol=0, atol=0)</code></
 <p>Study references, not spoken: <a href="https://github.com/tenstorrent/ttsim">official ttsim setup, supported architectures, and release-dependent features</a>, plus the local tt-sim lab&#39;s <code>docs/TTSIM_DEBUGGING_PATH.md</code> and <code>docs/WSL_AGENT_HOST_DEVICE_DEBUGGING.md</code>. The local notes record a dated environment, not a fresh verification of today&#39;s simulator. In particular, they distinguish host debugging from device diagnostics and document architecture-specific Watcher/profiler limitations. The proposed answers above do not convert those notes into additional completed Bos work.</p>
 </main><script>
 document.getElementById('print').addEventListener('click', () => window.print());
+const themeToggle = document.getElementById('theme-toggle');
+function updateThemeLabel() {
+  themeToggle.textContent = document.documentElement.dataset.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+}
+updateThemeLabel();
+themeToggle.hidden = false;
+themeToggle.addEventListener('click', () => {
+  const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = theme;
+  try { localStorage.setItem('interview-theme', theme); } catch {}
+  updateThemeLabel();
+});
 // Live refresh only talks to the explicitly started loopback preview server.
 if (location.protocol === 'http:' && ['127.0.0.1', 'localhost'].includes(location.hostname)) {
   let polling = false;
