@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="source-sha256" content="75f08c162369c9eabad392dd8dd6132ab557f101c8bf480c71440af0e0bf0c72"><meta name="build-fingerprint" content="70a8020f9020db33a48949aef7ebf7dbd396b9d4e90568479bb0e4f0c17e9139">
+<meta name="source-sha256" content="baa8664f321c12cc2a24a0bdd59292262d99ba9f1f6aa57d3e95be8f8301a981"><meta name="build-fingerprint" content="2b61f5f9c148f017fe42f2c7447f68ea14ced8f2f51be12dc07ffabdb56e6a40">
 <title>Huawei interview — presentation and Q&amp;A</title>
 <script>try { if (localStorage.getItem('interview-theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch {}</script>
 <style>:root { color-scheme: light; --bg: #f4f5f7; --text: #203449; --panel: #eef1f4; --muted: #43566a; --border: #c5d0dc; --heading: #183b64; --link: #164c85; --hover: #102f50; --code: #edf0f3; font-family: Arial, "Segoe UI", sans-serif; font-size: 15px; color: var(--text); background: var(--bg); }
@@ -50,7 +50,7 @@ th, td { text-align: left; border-bottom: 1px solid var(--border); padding: 4px 
 </style></head>
 <body><header><a href="#heading-jump-to-a-section">Sections</a> · <a href="huawei_presentation_with_qa.md">Markdown source</a> · <button type="button" id="print">Print</button>
  · <button type="button" id="theme-toggle" hidden>Switch to dark mode</button>
-<span id="sync-status">Generated from Markdown · 130 questions · offline diagrams</span></header>
+<span id="sync-status">Generated from Markdown · 132 questions · offline diagrams</span></header>
 <main><h1 id="heading-huawei-interview-presentation-script-with-interruption-q-a">Huawei interview — presentation script with interruption Q&amp;A</h1>
 <p>Prepared 5 September 2026; logic and source-code review updated 6 September 2026 for the submitted <a href="bui_cong_nguyen.pptx">bui_cong_nguyen.pptx</a>. The PowerPoint is unchanged.</p>
 <p>Reading version: <a href="huawei_presentation_with_qa.html">compact HTML</a>. This Markdown is the editable source; the HTML is generated from it, including the diagrams. See <a href="INTERVIEW_HTML_README.md">build and live-update instructions</a>. Diagrams are study aids, not new claims about the submitted slides or your implementation.</p>
@@ -78,7 +78,7 @@ th, td { text-align: left; border-bottom: 1px solid var(--border); padding: 4px 
 <li><a href="#slide-5">Slide 5 — TT-BUDA and TT-Metal</a></li>
 <li><a href="#slide-6">Slide 6 — NCRISC debugging</a></li>
 <li><a href="#slide-7">Slide 7 — Model enablement and matmul</a></li>
-<li><a href="#ttnn-model-enablement-qa">TT-NN model enablement and testing — Q7-8–16</a></li>
+<li><a href="#ttnn-model-enablement-qa">TT-NN model enablement and testing — Q7-8–18</a></li>
 <li><a href="#slide-8">Slide 8 — Summary and role fit</a></li>
 <li><a href="#jd-questions">Wider JD questions</a></li>
 <li><a href="#jd-programming">JD 1 — GPU/NPU programming (QJD1-1–QJD1-2)</a></li>
@@ -722,7 +722,7 @@ th, td { text-align: left; border-bottom: 1px solid var(--border); padding: 4px 
 <li>One concrete example is partitioning large matrix multiplications so they fit the NPU resources.</li>
 <li>The changes are specific to each model and operation, rather than a direct translation of CUDA syntax.</li>
 </ol>
-<p>For the Python-level workflow and test strategy, use <a href="#ttnn-model-enablement-qa">Q7-8–16</a>.</p>
+<p>For the Python-level workflow, test strategy, and unsupported-operation examples, use <a href="#ttnn-model-enablement-qa">Q7-8–18</a>.</p>
 <p><strong>After K-split (input-feature reduction split) and N-split (output-feature split)</strong></p>
 <p><strong>Matrix notation for this activation–weight example</strong></p>
 <ol>
@@ -793,7 +793,7 @@ th, td { text-align: left; border-bottom: 1px solid var(--border); padding: 4px 
 <p>For the technical follow-up, use <a href="#tt-metal-multichip-qa">QJD9-1–QJD9-8</a>. These describe how I would extend the work using supported Tenstorrent systems.</p>
 <p><a id="ttnn-model-enablement-qa"></a></p>
 <h3 id="heading-tt-nn-model-enablement-and-testing-optional-slide-7-follow-ups">TT-NN model enablement and testing — optional slide 7 follow-ups</h3>
-<p>Start with <strong>Q7-8</strong> to explain the software level, <strong>Q7-10</strong> for the test plan, and <strong>Q7-13</strong> for performance measurement. These answers explain repository examples and how I would approach the work; the public test suite is not a list of tests I personally implemented at Bos.</p>
+<p>Start with <strong>Q7-8</strong> to explain the software level, <strong>Q7-10</strong> for the test plan, <strong>Q7-13</strong> for performance measurement, and <strong>Q7-17–18</strong> for unsupported operations and deformable convolution. These answers explain repository examples and how I would approach the work; the public test suite is not a list of tests I personally implemented at Bos.</p>
 <p>Source scope, not spoken: reviewed 6 September 2026. The historical YOLOv8x example is pinned to <strong>16614590949e14b6c4b9552df3d8407ea08ebc9d</strong>, before <a href="https://github.com/tenstorrent/tt-metal/commit/48eb5431475fe9a885932b775cb48894cd22b960">the repository&#39;s YOLO removal commit</a>. It is a Wormhole example, not a current Blackhole support claim or proof that your YOLOv8 version used the same code. The current bring-up guide and ResNet50 tests are pinned to <strong>1f2ae9b54debe266b08e2062bbebd9b81932739a</strong>. No model or hardware benchmark was executed for this document.</p>
 <h4 id="q7-8" data-question="Q7-8">Q7-8: Is model enablement mainly Python-level TT-NN work, or does it require writing Metalium kernels?</h4>
 <p><strong>My answer</strong></p>
@@ -895,6 +895,41 @@ th, td { text-align: left; border-bottom: 1px solid var(--border); padding: 4px 
 </ol>
 <p>Study references, not spoken: <a href="https://github.com/tenstorrent/tt-metal/blob/1f2ae9b54debe266b08e2062bbebd9b81932739a/models/docs/model_bring_up.md">model bring-up milestones</a>, <a href="https://github.com/tenstorrent/tt-metal/blob/16614590949e14b6c4b9552df3d8407ea08ebc9d/models/demos/yolov8x/tests/perf/test_perf_yolov8x.py">device-performance test with failure assertions</a>, and <a href="https://github.com/tenstorrent/tt-metal/blob/1f2ae9b54debe266b08e2062bbebd9b81932739a/models/demos/vision/classification/resnet50/ttnn_resnet/tests/common/perf_e2e_resnet50.py">current ResNet50 output validation assertions</a>. The proposed acceptance criteria should be agreed for the project; not every historical example enforces all of them.</p>
 <p>Terminology references, not spoken: <a href="https://docs.tenstorrent.com/tt-metal/latest/tt-metalium/tt_metal/labs/matmul/lab2/lab2.html">SPMD in the Metalium programming model</a>, <a href="https://github.com/tenstorrent/sfpi">SFPI naming</a>, <a href="https://github.com/tenstorrent/tt-llk/blob/main/docs/llk/l2/top_level_overview.md">SFPU / Special FPU</a>, <a href="https://docs.nvidia.com/cuda/cuda-programming-guide/01-introduction/introduction.html">CUDA naming</a>, and <a href="https://github.com/tenstorrent/tt-umd">UMD naming</a>.</p>
+<h4 id="q7-17" data-question="Q7-17">Q7-17: What would you do if a model needs an operation that TTNN does not support?</h4>
+<p><strong>My answer</strong></p>
+<ol>
+<li>I would first check exactly what is unsupported: the operation itself, or only its shape, data type, layout, grouping, or target hardware. I would check the installed release and existing model examples before writing new code.</li>
+<li>I would isolate the operation and create a small reference test with the real inputs and parameters. That gives me a clear result to compare against while bringing it up.</li>
+<li>My first implementation choice would be a mathematically equivalent decomposition into supported TTNN operations. This can keep the data on the NPU and reuse existing kernels.</li>
+<li>If that is not practical yet, I could explicitly run that part on the host to get the model working. I would include device-to-host transfer, host computation, and transfer back in the timing. This is a deliberate fallback, not something I would assume TTNN provides automatically.</li>
+<li>If the operation is a major bottleneck, I would consider extending a C++ operator or implementing a custom Metalium kernel, then exposing it through TTNN. I would compare the development cost with the model-level performance benefit.</li>
+<li>I would test the replacement at operation, block, and model level, then check accuracy, memory use, and end-to-end latency. Replacing an unsupported operation with a different mathematical operation would need a separate model-quality evaluation.</li>
+</ol>
+<p>Study references, not spoken: <a href="https://docs.tenstorrent.com/tt-metal/latest/ttnn/ttnn/adding_new_ttnn_operation.html">official TTNN operation-extension guide</a> describes both composed operations and device operations, plus Python bindings. <a href="https://github.com/tenstorrent/tt-metal/blob/1f2ae9b54debe266b08e2062bbebd9b81932739a/models/docs/model_bring_up.md">Model bring-up guide</a>. This is a proposed decision process, not an additional completed Bos project.</p>
+<h4 id="q7-18" data-question="Q7-18">Q7-18: Can you explain that approach using deformable convolution as an example?</h4>
+<p><strong>My answer</strong></p>
+<ol>
+<li>A normal convolution samples a fixed spatial grid. Deformable convolution adds learned offsets to those sampling positions. Fractional positions require interpolation; the modulated version also multiplies each sampled value by a mask.</li>
+<li>I would first check whether an existing implementation supports my exact case. The reviewed TT-Metal UniAD example already has a TTNN decomposition, so I would evaluate that before building a new kernel.</li>
+<li>The decomposition is: calculate sampling coordinates, sample the input with bilinear interpolation, apply the modulation mask if present, then multiply by the convolution weights and accumulate across input channels and kernel positions. Bias is added once after the accumulation.</li>
+<li>In TTNN, the sampling stage can use a compatible <code>grid_sample</code> implementation, followed by multiply, reshape, matmul, and add operations. The UniAD example packs several sampling-coordinate sets together and splits large input-channel dimensions into chunks, then adds their partial outputs.</li>
+<li>I would check coordinate order, pixel-to-normalized coordinate conversion, <code>align_corners</code>, padding, convolution groups, and offset groups carefully. A correct shape alone does not guarantee that the samples come from the correct image positions.</li>
+<li>I would validate zero offsets with a unit mask against ordinary convolution, then test fractional offsets, image boundaries, non-unit masks, and real model inputs against the deformable-convolution reference. I would compare absolute and relative errors as well as the model&#39;s task accuracy.</li>
+<li>For performance, I would measure irregular memory reads, temporary sampled tensors, layout conversions, and the number of launches. If those dominate, I would consider a tiled custom implementation that combines sampling and masking and feeds the compute stage without materializing the entire expanded tensor.</li>
+</ol>
+<p><strong>If they ask: why not replace it with ordinary convolution?</strong></p>
+<ol>
+<li>Learned offsets change where the operation samples the input, and a modulation mask changes the sampled values.</li>
+<li>Ordinary convolution removes those behaviors. It is equivalent only in the special case of zero offsets and a unit mask, with matching weights and convolution settings.</li>
+<li>Otherwise, that would be a model change, not just an implementation optimization, so it would require accuracy evaluation and potentially retraining.</li>
+</ol>
+<p><strong>If they ask: what limitations did you find in the public example?</strong></p>
+<ol>
+<li>The reviewed UniAD helper asserts convolution groups equal to one and deformable groups equal to one. It also requires a square kernel and input channels that divide cleanly into its chosen chunks.</li>
+<li>It uses chunks of at most 256 input channels in that implementation. I would check those restrictions against the actual installed operator version instead of assuming that every deformable convolution is supported.</li>
+<li>Its base sampling grid can be reused for matching shapes, but the learned offsets and masks still need to be applied for each input. Caching the base grid is not caching the final input-dependent sampling locations.</li>
+</ol>
+<p>Study references, not spoken: checked 9 September 2026. <a href="https://github.com/tenstorrent/tt-metal/blob/1f2ae9b54debe266b08e2062bbebd9b81932739a/models/experimental/uniad/tt/ttnn_modulated_deform_conv.py">UniAD TTNN deformable-convolution helper</a>, <a href="https://github.com/tenstorrent/tt-metal/blob/1f2ae9b54debe266b08e2062bbebd9b81932739a/ttnn/cpp/ttnn/operations/pool/grid_sample/device/grid_sample_device_operation.cpp">grid-sample validation and memory-layout restrictions</a>, <a href="https://docs.pytorch.org/vision/0.28/generated/torchvision.ops.deform_conv2d.html">Torchvision deformable-convolution reference</a>, and <a href="https://arxiv.org/abs/1703.06211">original deformable-convolution paper</a>. The helper describes itself as a starting scaffold: its presence is not proof of production readiness, universal support, or your personal implementation. Its introductory comment mentions separate calls per kernel position, but the reviewed executable code packs positions into a batched grid-sample call per channel chunk. Deformable convolution and deformable attention are different operations, even though both may use sampling primitives. No NPU implementation or benchmark was run for this answer.</p>
 <h3 id="heading-transition-to-the-next-slide-7">Transition to the next slide</h3>
 <p>“That covers the model-execution work and the large-matrix example. I will finish with how this experience fits the role.”</p>
 <hr>
