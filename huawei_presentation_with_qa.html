@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="source-sha256" content="70376445f87f3a571ae53647ba1e04c9e16cdb8af23783a02865f1958a44fcec"><meta name="build-fingerprint" content="b2bc7bbcb565cfd7b6741d0dd7dd11ab43e7b0f01b10570d6b1b4ac98466dd06">
+<meta name="source-sha256" content="187152baee9d1843d2c050cc0fb21b498365168243a17a6faaf3f16d40658fd7"><meta name="build-fingerprint" content="8057381115342d760db483b2e67bb8e52787dde84becb170b06c8a724dc68fe8">
 <title>Huawei interview — presentation and Q&amp;A</title>
 <script>try { if (localStorage.getItem('interview-theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch {}</script>
 <style>:root { color-scheme: light; --bg: #f4f5f7; --text: #203449; --panel: #eef1f4; --muted: #43566a; --border: #c5d0dc; --heading: #183b64; --link: #164c85; --hover: #102f50; --code: #edf0f3; font-family: Arial, "Segoe UI", sans-serif; font-size: 15px; color: var(--text); background: var(--bg); }
@@ -1376,14 +1376,14 @@ torch.testing.assert_close(ttnn.to_torch(x_back), host, rtol=0, atol=0)</code></
 <li>For a custom operation, I would test repeated calls with different values and newly allocated buffers. I would also test changes in shapes or configurations to catch incorrect reuse or stale arguments.</li>
 </ol>
 <p>Study references, not spoken: <a href="https://github.com/tenstorrent/tt-metal/blob/1f2ae9b54debe266b08e2062bbebd9b81932739a/tt_metal/api/tt-metalium/program_cache.hpp">cached programs, shared variables, and cache-key structure</a>, <a href="https://github.com/tenstorrent/tt-metal/blob/1f2ae9b54debe266b08e2062bbebd9b81932739a/ttnn/api/ttnn/mesh_device_operation_adapter.hpp">operation hashing and runtime-argument overrides</a>, and <a href="https://github.com/tenstorrent/tt-metal/blob/1f2ae9b54debe266b08e2062bbebd9b81932739a/ttnn/ttnn/examples/usage/program_cache.py">first-run versus cached-run example</a>. A program-cache hit is not a guarantee that every host-side cost disappears; that is why trace replay can provide an additional benefit.</p>
-<h4 id="qjd8-4" data-question="QJD8-4">QJD8-4: How do program caching, persistent kernel caching, and ccache differ?</h4>
+<h4 id="qjd8-4" data-question="QJD8-4">QJD8-4: How do program caching, persistent kernel caching, and ccache (compiler cache) differ?</h4>
 <p><strong>My answer</strong></p>
 <ol>
 <li>The program cache keeps reusable program objects in the host process, associated with the device handle. It helps repeated compatible operation calls in that runtime session.</li>
 <li>A persistent kernel-build cache keeps compiled artifacts on the host&#39;s disk so a later run can reuse compatible binaries instead of compiling them again. It is used during kernel preparation, before the binary is loaded and executed on the device.</li>
 <li>The reviewed JIT (Just-In-Time) build code checks for a reusable ELF (Executable and Linkable Format) binary, matching build state, and up-to-date dependencies.</li>
 <li>Source, compiler, build flags, or link inputs can invalidate reuse. For a linker-related debug change, I would verify that the rebuilt ELF is actually the one being loaded.</li>
-<li>ccache is used around compiler invocations on the host to reuse compatible compilation results. TT-Metal&#39;s build code has an optional ccache path, separate from the runtime program cache.</li>
+<li>ccache (compiler cache) is a tool used around compiler invocations on the host to reuse compatible compilation results. It speeds up rebuilding code, not the computation inside an already-built kernel. TT-Metal&#39;s build code has an optional ccache path, separate from the runtime program cache.</li>
 <li>These caches mainly reduce preparation and compilation costs. They do not replace the computation or automatically reduce steady-state memory traffic.</li>
 </ol>
 <p>Study references, not spoken: <a href="https://github.com/tenstorrent/tt-metal/blob/1f2ae9b54debe266b08e2062bbebd9b81932739a/tt_metal/jit_build/build.cpp">JIT build reuse, compiler identity, link dependencies, and optional ccache</a> and <a href="https://github.com/tenstorrent/tt-metal/blob/1f2ae9b54debe266b08e2062bbebd9b81932739a/tt_metal/jit_build/jit_build_cache.cpp">in-process build-once coordination</a>. The latter avoids duplicate builds of the same key within a process; it should not be confused with disk persistence. Recheck the installed release before using a remembered enable-cache API name.</p>
