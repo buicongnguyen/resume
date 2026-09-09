@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="source-sha256" content="187152baee9d1843d2c050cc0fb21b498365168243a17a6faaf3f16d40658fd7"><meta name="build-fingerprint" content="8057381115342d760db483b2e67bb8e52787dde84becb170b06c8a724dc68fe8">
+<meta name="source-sha256" content="75f08c162369c9eabad392dd8dd6132ab557f101c8bf480c71440af0e0bf0c72"><meta name="build-fingerprint" content="70a8020f9020db33a48949aef7ebf7dbd396b9d4e90568479bb0e4f0c17e9139">
 <title>Huawei interview — presentation and Q&amp;A</title>
 <script>try { if (localStorage.getItem('interview-theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch {}</script>
 <style>:root { color-scheme: light; --bg: #f4f5f7; --text: #203449; --panel: #eef1f4; --muted: #43566a; --border: #c5d0dc; --heading: #183b64; --link: #164c85; --hover: #102f50; --code: #edf0f3; font-family: Arial, "Segoe UI", sans-serif; font-size: 15px; color: var(--text); background: var(--bg); }
@@ -689,16 +689,19 @@ th, td { text-align: left; border-bottom: 1px solid var(--border); padding: 4px 
 <h2 id="heading-slide-7-end-to-end-execution-and-model-enablement">Slide 7 — End-to-End Execution and Model Enablement</h2>
 <ol>
 <li>This slide summarizes the completed work at Bos: platform bring-up, model execution, low-level debugging, and optimization.</li>
-<li>For the host-to-NPU bring-up, I first tested Raspberry Pi 4 as the host.</li>
-<li>I also tested NVIDIA Jetson Orin, and the final system used an Intel host board.</li>
-<li>For model enablement, I ported YOLOv8, PointPillar, UniAD, and VAD to run on the NPU.</li>
+<li>For the host-to-NPU bring-up, I first tested Raspberry Pi 4, then NVIDIA Jetson Orin. The final system used an Intel host board.</li>
+<li>For model enablement, I worked mainly at the TTNN Python level, connecting supported operations to run YOLOv8, PointPillar, UniAD, and VAD on the NPU.</li>
+<li>For each layer, I configured the input and output tensor layouts, data types, memory placement, and supported sharding and core-grid settings.</li>
+<li>This included choosing DRAM or L1 memory and interleaved or sharded storage, then making the output compatible with the next layer&#39;s input.</li>
+<li>Another optimization is fusion. During inference, batch normalization can be folded into the convolution weights and bias. A supported activation can also be fused into the convolution execution, while keeping the model&#39;s original activation.</li>
 <li>One issue in YOLOv8 was a large matrix multiplication that did not fit the available NPU compute and memory resources as one operation.</li>
 <li>One solution was K-split (splitting the reduction dimension over input features): run partial matrix multiplications and accumulate the partial results.</li>
 <li>Another solution was N-split (splitting output features or output channels): run separate matrix multiplications and concatenate the outputs.</li>
-<li>I checked the complete execution path across the host, dispatch, L1 placement, firmware, and kernels.</li>
-<li>The tools I used included code generation, linker scripts, L1 placement, Fast Dispatch, DPRINT, and Tracy.</li>
+<li>Alongside the TTNN work, I checked the execution path across the host, dispatch, L1 placement, firmware, and kernels.</li>
+<li>The tools I used included code generation, linker scripts, Fast Dispatch, DPRINT, and Tracy.</li>
 <li>The result was completed model execution, with the large YOLOv8 matrix multiplications partitioned to fit the NPU resources.</li>
 </ol>
+<p>Study note, not spoken: item 6 explains an available optimization, rather than asserting an unconfirmed fusion configuration from Bos. Batch-normalization folding uses fixed inference statistics; activation fusion is a separate step. The checked historical YOLOv8x implementation uses SiLU (Sigmoid Linear Unit) in its usual convolution blocks, not ReLU (Rectified Linear Unit). Preserve the actual model&#39;s activation. See <a href="https://github.com/tenstorrent/tt-metal/blob/16614590949e14b6c4b9552df3d8407ea08ebc9d/models/demos/yolov8x/tt/ttnn_yolov8x.py">TTNN layer and memory configuration</a> and <a href="https://github.com/tenstorrent/tt-metal/blob/16614590949e14b6c4b9552df3d8407ea08ebc9d/models/demos/yolov8x/tt/ttnn_yolov8x_utils.py">batch-normalization preprocessing</a>.</p>
 <h3 id="heading-possible-interruptions-6">Possible interruptions</h3>
 <p>If they extend the model-enablement discussion to compression, quantization, pruning, sparse convolution, or im2col, use <a href="#tt-metal-optimization-qa">QJD5-1–QJD5-14</a>. These are follow-up answers, not additional claims in the slide script.</p>
 <p>For sharding and DRAM interleaving, use <a href="#tt-metal-memory-qa">QJD6-1–QJD6-10</a>. For the 19-bit internal-precision comparison, use <a href="#tt-metal-tf32-qa">QJD7-1</a>. For runtime performance techniques, use <a href="#tt-metal-runtime-performance-qa">QJD8-1–QJD8-7</a>. For multi-chip execution, use <a href="#tt-metal-multichip-qa">QJD9-1–QJD9-8</a>, after clarifying your actual experience in Q7-7.</p>
