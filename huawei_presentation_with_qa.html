@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="source-sha256" content="baa8664f321c12cc2a24a0bdd59292262d99ba9f1f6aa57d3e95be8f8301a981"><meta name="build-fingerprint" content="2b61f5f9c148f017fe42f2c7447f68ea14ced8f2f51be12dc07ffabdb56e6a40">
+<meta name="source-sha256" content="c07946afccd018ea0ea6ca819b2a8af0ce36a387e17199cd9e345af306d6c190"><meta name="build-fingerprint" content="00d8c069bcba0c89d45fa5caad0eb88659f8fd0fdea0c4f55075255af21d2ce8">
 <title>Huawei interview — presentation and Q&amp;A</title>
 <script>try { if (localStorage.getItem('interview-theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch {}</script>
 <style>:root { color-scheme: light; --bg: #f4f5f7; --text: #203449; --panel: #eef1f4; --muted: #43566a; --border: #c5d0dc; --heading: #183b64; --link: #164c85; --hover: #102f50; --code: #edf0f3; font-family: Arial, "Segoe UI", sans-serif; font-size: 15px; color: var(--text); background: var(--bg); }
@@ -50,7 +50,7 @@ th, td { text-align: left; border-bottom: 1px solid var(--border); padding: 4px 
 </style></head>
 <body><header><a href="#heading-jump-to-a-section">Sections</a> · <a href="huawei_presentation_with_qa.md">Markdown source</a> · <button type="button" id="print">Print</button>
  · <button type="button" id="theme-toggle" hidden>Switch to dark mode</button>
-<span id="sync-status">Generated from Markdown · 132 questions · offline diagrams</span></header>
+<span id="sync-status">Generated from Markdown · 133 questions · offline diagrams</span></header>
 <main><h1 id="heading-huawei-interview-presentation-script-with-interruption-q-a">Huawei interview — presentation script with interruption Q&amp;A</h1>
 <p>Prepared 5 September 2026; logic and source-code review updated 6 September 2026 for the submitted <a href="bui_cong_nguyen.pptx">bui_cong_nguyen.pptx</a>. The PowerPoint is unchanged.</p>
 <p>Reading version: <a href="huawei_presentation_with_qa.html">compact HTML</a>. This Markdown is the editable source; the HTML is generated from it, including the diagrams. See <a href="INTERVIEW_HTML_README.md">build and live-update instructions</a>. Diagrams are study aids, not new claims about the submitted slides or your implementation.</p>
@@ -78,7 +78,7 @@ th, td { text-align: left; border-bottom: 1px solid var(--border); padding: 4px 
 <li><a href="#slide-5">Slide 5 — TT-BUDA and TT-Metal</a></li>
 <li><a href="#slide-6">Slide 6 — NCRISC debugging</a></li>
 <li><a href="#slide-7">Slide 7 — Model enablement and matmul</a></li>
-<li><a href="#ttnn-model-enablement-qa">TT-NN model enablement and testing — Q7-8–18</a></li>
+<li><a href="#ttnn-model-enablement-qa">TT-NN model enablement and testing — Q7-8–19</a></li>
 <li><a href="#slide-8">Slide 8 — Summary and role fit</a></li>
 <li><a href="#jd-questions">Wider JD questions</a></li>
 <li><a href="#jd-programming">JD 1 — GPU/NPU programming (QJD1-1–QJD1-2)</a></li>
@@ -722,7 +722,7 @@ th, td { text-align: left; border-bottom: 1px solid var(--border); padding: 4px 
 <li>One concrete example is partitioning large matrix multiplications so they fit the NPU resources.</li>
 <li>The changes are specific to each model and operation, rather than a direct translation of CUDA syntax.</li>
 </ol>
-<p>For the Python-level workflow, test strategy, and unsupported-operation examples, use <a href="#ttnn-model-enablement-qa">Q7-8–18</a>.</p>
+<p>For the Python-level workflow, test strategy, unsupported-operation examples, and custom-kernel steps, use <a href="#ttnn-model-enablement-qa">Q7-8–19</a>.</p>
 <p><strong>After K-split (input-feature reduction split) and N-split (output-feature split)</strong></p>
 <p><strong>Matrix notation for this activation–weight example</strong></p>
 <ol>
@@ -930,6 +930,33 @@ th, td { text-align: left; border-bottom: 1px solid var(--border); padding: 4px 
 <li>Its base sampling grid can be reused for matching shapes, but the learned offsets and masks still need to be applied for each input. Caching the base grid is not caching the final input-dependent sampling locations.</li>
 </ol>
 <p>Study references, not spoken: checked 9 September 2026. <a href="https://github.com/tenstorrent/tt-metal/blob/1f2ae9b54debe266b08e2062bbebd9b81932739a/models/experimental/uniad/tt/ttnn_modulated_deform_conv.py">UniAD TTNN deformable-convolution helper</a>, <a href="https://github.com/tenstorrent/tt-metal/blob/1f2ae9b54debe266b08e2062bbebd9b81932739a/ttnn/cpp/ttnn/operations/pool/grid_sample/device/grid_sample_device_operation.cpp">grid-sample validation and memory-layout restrictions</a>, <a href="https://docs.pytorch.org/vision/0.28/generated/torchvision.ops.deform_conv2d.html">Torchvision deformable-convolution reference</a>, and <a href="https://arxiv.org/abs/1703.06211">original deformable-convolution paper</a>. The helper describes itself as a starting scaffold: its presence is not proof of production readiness, universal support, or your personal implementation. Its introductory comment mentions separate calls per kernel position, but the reviewed executable code packs positions into a batched grid-sample call per channel chunk. Deformable convolution and deformable attention are different operations, even though both may use sampling primitives. No NPU implementation or benchmark was run for this answer.</p>
+<h4 id="q7-19" data-question="Q7-19">Q7-19: If a custom implementation is needed, what steps would you follow to build a Metalium kernel and expose it through TTNN?</h4>
+<p><strong>My answer</strong></p>
+<ol>
+<li><strong>Define the operation and reference.</strong> I would specify the inputs, outputs, supported shapes, data types, layouts, and numerical tolerance. I would keep a small CPU or PyTorch reference and start with one supported configuration.</li>
+<li><strong>Choose what actually needs a new kernel.</strong> I would profile the existing decomposition first. For deformable convolution, I might only need a better sampling-and-mask stage while continuing to use the existing TTNN matmul. I would not rewrite the whole operation unless that gives a useful benefit.</li>
+<li><strong>Plan the work and memory.</strong> I would divide the output into blocks, assign ownership to cores, and calculate the L1 space needed for inputs, outputs, scratch space, and circular buffers. I would also handle padding and the final partial block.</li>
+<li><strong>Start with a minimal Metalium program.</strong> I would adapt a working example for the target architecture. The host-side program defines the core ranges, buffers, kernel sources, compile-time settings, and per-core runtime arguments such as addresses, offsets, and work counts.</li>
+<li><strong>Implement the data-movement and compute stages.</strong> The reader gathers the required data, the compute stage performs the supported arithmetic through the Tensix compute APIs, and the writer stores the result. Their work can run on the same Tensix tile using its different processors; this does not require three separate tiles.</li>
+<li><strong>Make buffer ownership explicit.</strong> The producer reserves free circular-buffer space and publishes data only when it is ready. The consumer waits for available data and releases it only after use. For asynchronous NoC transfers, I would use the matching completion barriers before publishing received data or reusing a buffer that is still being written out.</li>
+<li><strong>Verify one core, then scale.</strong> I would first compare a small single-core result with the reference. Then I would distribute independent output blocks across cores, check that every output is written exactly once, and add reductions only where the partition requires them.</li>
+<li><strong>Add the TTNN operation wrapper.</strong> I would implement input validation, output tensor specification, and program construction, then expose it through the release&#39;s Python binding mechanism. The current guide uses ProgramDescriptor to describe kernels and buffers; I would follow the pattern supported by the installed release.</li>
+<li><strong>Test repeated execution and integration.</strong> I would test changed input values, newly allocated buffers, supported shapes, boundary cases, and repeated calls through the program cache. Then I would replace the original block in the model and check numerical results and task accuracy again.</li>
+<li><strong>Optimize after correctness.</strong> I would measure kernel and end-to-end time, then tune block sizes, sharding, reuse, and double buffering. I would keep regression tests and supported-configuration checks with the implementation.</li>
+</ol>
+<p><strong>If they ask: what would the custom part look like for deformable convolution?</strong></p>
+<ol>
+<li>For each output block, I would read its offsets and masks and calculate the required sampling positions, including stride, padding, and dilation.</li>
+<li>A reader would gather the four neighboring values needed for each bilinear sample, with correct zero-padding behavior. I would choose where interpolation and mask multiplication execute based on supported instructions and measured cost.</li>
+<li>I would arrange sampled blocks for the weight multiplication. If I reuse a separate TTNN matmul, its input must be a tensor with a supported layout and lifetime; a private circular buffer is not automatically a TTNN tensor.</li>
+<li>If I later combine sampling and multiplication in one Metalium program, the stages could exchange blocks through circular buffers. I would accumulate all required input-channel and kernel-position contributions before adding bias and writing the final output.</li>
+</ol>
+<p><strong>If they ask: do you need to write RISC-V assembly?</strong></p>
+<ol>
+<li>I would normally start with C++ data-movement kernels and the supported compute APIs. The toolchain generates the device code.</li>
+<li>Assembly would be a deeper, targeted step if a measured problem required it, not the starting requirement for every custom kernel.</li>
+</ol>
+<p>Study references, not spoken: checked 9 September 2026 against the <a href="https://docs.tenstorrent.com/tt-metal/latest/tt-metalium/tt_metal/examples/eltwise_binary.html">Metalium reader/compute/writer example and circular-buffer synchronization</a>, <a href="https://docs.tenstorrent.com/tt-metal/latest/ttnn/ttnn/adding_new_ttnn_operation.html">current TTNN operation integration and ProgramDescriptor guide</a>, and <a href="https://github.com/tenstorrent/tt-metal/blob/1f2ae9b54debe266b08e2062bbebd9b81932739a/models/experimental/uniad/tt/ttnn_modulated_deform_conv.py">UniAD deformable-convolution decomposition</a>. This is a proposed implementation plan, not a claim that you completed a custom deformable-convolution kernel. A custom TTNN operation may contain several kernels; it is not necessarily one source file or one fused kernel. Program-cache correctness still needs testing even when the framework manages buffer-address updates. No device kernel was built or benchmarked for this answer.</p>
 <h3 id="heading-transition-to-the-next-slide-7">Transition to the next slide</h3>
 <p>“That covers the model-execution work and the large-matrix example. I will finish with how this experience fits the role.”</p>
 <hr>
